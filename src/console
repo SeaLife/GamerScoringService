@@ -1,18 +1,18 @@
+#!/usr/bin/php
 <?php
-/** @noinspection PhpIncludeInspection */
+/** @noinspection ALL */
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use PhpParser\PrettyPrinter\Standard;
-use Plumbok\Compiler;
-use Plumbok\Compiler\NodeFinder;
-use Plumbok\TagsUpdater;
+
+/** @noinspection PhpIncludeInspection */
 
 include_once __DIR__ . '/bootstrap/globals.php';
+include_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class ClassLoader
  */
-class ClassLoader {
+class SubClassLoader {
 
     private static $loaders = array();
 
@@ -42,7 +42,7 @@ class ClassLoader {
     }
 }
 
-ClassLoader::add(function ($name) {
+SubClassLoader::add(function ($name) {
 
     $pathCorrect = function ($path, $replace = "/") {
         $str = str_replace("\\", $replace, $path);
@@ -103,20 +103,10 @@ ClassLoader::add(function ($name) {
     }
 });
 
-// default exception handler, will be used in bootstrap errors.
-set_exception_handler(function (Throwable $ex) {
-    echo "<pre>";
-    echo get_class($ex) . ": " . $ex->getMessage();
-    echo "\n";
-    echo "\n";
-    echo $ex->getTraceAsString();
-    echo "</pre>";
-});
+SubClassLoader::init();
 
-include_once envvar("COMPOSE_LOCATION", __DIR__ . "/../") . "vendor/autoload.php";
+$app = new \Symfony\Component\Console\Application();
 
-ClassLoader::init();
+$app->add(new \Console\ServerCommand());
 
-include __DIR__ . '/config.php';
-include __DIR__ . '/bootstrap/bootstrap.php';
-include __DIR__ . '/app.php';
+$app->run();

@@ -2,9 +2,14 @@
 
 namespace Globals;
 
+use Api\SubExecutor;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Annotations\DocParser;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use InvalidArgumentException;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Util\SingletonFactory;
 
@@ -16,12 +21,8 @@ class Routing extends SingletonFactory {
         return $this->routes;
     }
 
-    public function addRoute ($route, RouteExecutor $executor, $method = "GET") {
-        array_push($this->routes, array(
-            "route"    => $route,
-            "executor" => $executor,
-            "method"   => $method
-        ));
+    public function addRoute ($route, RouteExecutor $executor, $method = "GET", $name = "unknown", $source = 'routes.yml') {
+        array_push($this->routes, array("route" => $route, "executor" => $executor, "method" => $method, "name" => $name, "source" => $source));
     }
 
     public function init () {
@@ -29,8 +30,9 @@ class Routing extends SingletonFactory {
 
         foreach ($routes["routes"] as $k => $v) {
             if (class_exists($v["handler"])) {
-                $this->addRoute($v["path"], new $v["handler"](), orv(@$v["method"], "GET"));
-            } else {
+                $this->addRoute($v["path"], new $v["handler"](), orv(@$v["method"], "GET"), $v["name"]);
+            }
+            else {
                 $this->getLogger()->warning("Executor '{}' for Path '{}'@'{}' does not exist", array($v["handler"], $v["name"], $v["path"]));
             }
         }
@@ -57,7 +59,7 @@ class Routing extends SingletonFactory {
         switch ($routeInfo[0]) {
             default:
             case Dispatcher::NOT_FOUND:
-                throw new InvalidArgumentException("Page not found");
+                NotFoundResponder::run();
                 break;
 
             case Dispatcher::FOUND:
@@ -65,6 +67,39 @@ class Routing extends SingletonFactory {
                 $handler = $routeInfo[1];
                 $handler->doRun($httpMethod, $routeInfo[2]);
                 break;
+        }
+    }
+
+    public function findRoutes () {
+        AnnotationRegistry::registerFile(__DIR__ . "/../Globals/WebResponder.php");
+
+        $finder = Finder::create()->files()->name('*Router.php')->name('*Controller.php')->in(__DIR__ . "/../");
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $reader = new AnnotationReader(new DocParser());
+
+        foreach ($finder as $file) {
+            /** @var $file \SplFileInfo */
+            /** @noinspection PhpIncludeInspection */
+            include_once $file->getRealPath();
+            $loaded = get_declared_classes();
+            $loaded = $loaded[count($loaded) - 1];
+
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $rfClass = new \ReflectionClass($loaded);
+
+            $methods = $rfClass->getMethods();
+
+            $instance = new $loaded();
+
+            foreach ($methods as $method) {
+                /** @var $responder \Globals\WebResponder */
+                $responder = $reader->getMethodAnnotation($method, "Globals\WebResponder");
+
+                if ($responder != NULL) {
+                    $this->addRoute($responder->path, new SubExecutor($instance, $method, $responder), $responder->method, $responder->name, $loaded);
+                }
+            }
         }
     }
 }

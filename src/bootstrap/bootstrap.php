@@ -29,5 +29,3 @@ set_exception_handler(function (Throwable $ex) {
         echo "</div></div>";
     }
 });
-
-include 'app.php';

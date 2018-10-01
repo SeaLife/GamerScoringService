@@ -1,5 +1,5 @@
 routes:
-- name: root
+- name: root_servlet
   path: /
   handler: WebService\RootHandler
   acl:
@@ -7,14 +7,10 @@ routes:
   method:
     - GET
     - POST
-- name: SwaggerJSON
+- name: swagger_servlet
   path: /api/docs
   handler: WebService\ApiHandler
   acl:
     anonymous: true
   method:
     - GET
-- name: debug_routeAdmin
-  path: /debug/routes
-  handler: WebService\RoutesViewerHandler
-  method: GET
