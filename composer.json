@@ -1,0 +1,11 @@
+{
+    "require": {
+        "sealife/plumbok": "dev-master",
+        "symfony/yaml": "^4.1",
+        "symfony/cache": "^4.1",
+        "predis/predis": "^1.1",
+        "zircote/swagger-php": "^3.0",
+        "twig/twig": "^2.5",
+        "nikic/fast-route": "^1.3"
+    }
+}

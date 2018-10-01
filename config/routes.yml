@@ -1,0 +1,20 @@
+routes:
+- name: root
+  path: /
+  handler: WebService\RootHandler
+  acl:
+    anonymouse: true # is default if no 'roles' or 'permissions' flag is added to 'acl'
+  method:
+    - GET
+    - POST
+- name: SwaggerJSON
+  path: /api/docs
+  handler: WebService\ApiHandler
+  acl:
+    anonymous: true
+  method:
+    - GET
+- name: debug_routeAdmin
+  path: /debug/routes
+  handler: WebService\RoutesViewerHandler
+  method: GET
