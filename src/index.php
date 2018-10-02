@@ -7,7 +7,11 @@ use Plumbok\Compiler;
 use Plumbok\Compiler\NodeFinder;
 use Plumbok\TagsUpdater;
 
+define("__ROOT__", __DIR__);
+
 include_once __DIR__ . '/bootstrap/globals.php';
+
+session_start();
 
 /**
  * Class ClassLoader
@@ -28,8 +32,7 @@ class ClassLoader {
 
                     if (class_exists($name)) return TRUE;
                 }
-            }
-            else {
+            } else {
                 return TRUE;
             }
 
@@ -49,7 +52,7 @@ ClassLoader::add(function ($name) {
         return str_replace("/", $replace, $str);
     };
 
-    $cacheLocation    = envvar("SYSTEM_PLUMBOK_LOCATION", "cache/");
+    $cacheLocation    = envvar("SYSTEM_PLUMBOK_LOCATION", __DIR__ . "/../cache/");
     $cacheEnabled     = toBool(envvar("SYSTEM_PLUMBOK_CACHE_ENABLED", "true"));
     $plumbokEnabled   = toBool(envvar("SYSTEM_PLUMBOK_ENABLED", "true"));
     $plumbokOverwrite = toBool(envvar("SYSTEM_PLUMBOK_OVERWRITE_ORIGINAL", "true"));
@@ -96,8 +99,7 @@ ClassLoader::add(function ($name) {
             } catch (Error $e) {
                 include_once $phpFile;
             }
-        }
-        else {
+        } else {
             include_once $phpFile;
         }
     }

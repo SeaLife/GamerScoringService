@@ -1,0 +1,17 @@
+credentials:
+  password_dev: &password_dev "%env(DATABASE_PASSWORD_DEV)%"
+  password: &password "%env(DATABASE_PASSWORD_PROD)%"
+
+database:
+  dev:
+    driver: pdo_mysql
+    user: gamerscoring_dev
+    host: r3ktm8.de:3307
+    password: *password_dev
+    dbname: gamerscoring_dev
+  prod:
+    driver: pdo_mysql
+    user: gamerscoring
+    host: r3ktm8.de
+    password: *password
+    dbname: gamerscoring_dev

@@ -2,46 +2,42 @@
 
 namespace Api;
 
+use Globals\NotFoundResponder;
 use Globals\Routing;
 use Globals\WebResponder;
 use OpenApi\Annotations\Get;
-use OpenApi\Annotations\Info;
 use OpenApi\Annotations\MediaType;
-use OpenApi\Annotations\OpenApi;
 use OpenApi\Annotations\Response;
-use OpenApi\Annotations\Server;
-use OpenApi\Annotations\Tag;
+use Output\Http\Content;
+use Output\Http\OutputManager;
 
-/**
- * @Info(
- *     title="GamerScoring Service",
- *     version="0.1-BETA",
- *     license="MIT",
- *     description="tbd",
- *     @OpenApi(servers={@Server(url="http://localhost:8000")})
- * )
- *
- * @Tag(
- *     name="Debug Controller",
- *     description="Debug Actions"
- * )
- * @Tag(
- *     name="Service Interface",
- *     description="Service Actions"
- * )
- */
+
 class DebugController {
 
     /**
-     * @WebResponder(path="/api/debug/routes", name="test endpoint", method="GET", produces="application/json")
+     * @WebResponder(path="/api/debug/routes", name="Returns all configured routes as json/html", method="GET")
      * @Get(
      *     tags={"Debug Controller"},
      *     path="/api/debug/routes",
+     *     description="Required Permissions: \n- ``ROLE_ADMIN``",
      *     @Response(response="200", description="OK"),
      *     @MediaType(mediaType="application/json")
      * )
      */
     public function debugEndpoints () {
-        echo json_encode(Routing::getInstance()->getRoutes());
+        if (!toBool(envvar("SYSTEM_DEBUG")) && envvar("PROFILE") != "dev") {
+            NotFoundResponder::run();
+            return;
+        }
+
+        $headers = getallheaders();
+        $accept  = orv($headers["Accept"], "text/html");
+
+        if (strpos($accept, 'text/html') !== FALSE) {
+            OutputManager::getInstance()->display(new Content("debug/routes.html.twig", array("routes" => Routing::getInstance()->getRoutes())));
+        } else {
+            header("Content-Type: application/json");
+            echo json_encode(Routing::getInstance()->getRoutes());
+        }
     }
 }

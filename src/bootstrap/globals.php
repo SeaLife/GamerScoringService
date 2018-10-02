@@ -16,7 +16,9 @@ function orv ($val, $or) {
 function envvar ($key, $def = NULL) {
     $val = orv(@$_ENV[$key], $def);
 
-    if ($val == $def) $_ENV[$key] = $def;
+    if (!isset($_ENV[$key])) {
+        $_ENV[$key] = $def;
+    }
 
     if (file_exists("envvar") && is_dir("envvar"))
         file_put_contents("envvar/" . $key . ".env", $val);

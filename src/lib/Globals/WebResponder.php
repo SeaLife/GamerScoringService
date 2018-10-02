@@ -12,5 +12,5 @@ class WebResponder extends AbstractAnnotation {
     public $method   = 'GET';
     public $path     = '';
     public $name     = 'unknown';
-    public $produces = 'text/html';
+    public $produces = '';
 }
