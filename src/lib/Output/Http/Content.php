@@ -25,4 +25,8 @@ class Content {
     public function getContext () {
         return $this->context;
     }
+
+    public function render() {
+        OutputManager::getInstance()->display($this);
+    }
 }

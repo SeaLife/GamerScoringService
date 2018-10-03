@@ -2,7 +2,9 @@
 
 namespace WebService;
 
-use Globals\RouteExecutor;
+use Globals\Routing\RouteExecutor;
+use Output\Http\Content;
+use Output\Http\OutputManager;
 
 /**
  * Handler for returning the root document at /
@@ -11,6 +13,8 @@ use Globals\RouteExecutor;
  */
 class RootHandler implements RouteExecutor {
     public function doRun ($method, $vars) {
-        echo "Hello World";
+        $content = new Content("web/root.html.twig");
+
+        OutputManager::getInstance()->display($content);
     }
 }

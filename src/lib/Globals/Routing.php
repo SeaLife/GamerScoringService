@@ -2,13 +2,13 @@
 
 namespace Globals;
 
-use Api\SubExecutor;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\DocParser;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use InvalidArgumentException;
+use Globals\Routing\RouteExecutor;
+use Globals\Routing\SubExecutor;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Util\SingletonFactory;
@@ -71,7 +71,7 @@ class Routing extends SingletonFactory {
     }
 
     public function findRoutes () {
-        AnnotationRegistry::registerFile(__DIR__ . "/../Globals/WebResponder.php");
+        AnnotationRegistry::registerFile(__DIR__ . "/../Globals/Annotations/WebResponder.php");
 
         $finder = Finder::create()->files()->name('*Router.php')->name('*Controller.php')->in(__DIR__ . "/../");
 
@@ -93,13 +93,17 @@ class Routing extends SingletonFactory {
             $instance = new $loaded();
 
             foreach ($methods as $method) {
-                /** @var $responder \Globals\WebResponder */
-                $responder = $reader->getMethodAnnotation($method, "Globals\WebResponder");
+                /** @var $responder \Globals\Annotations\WebResponder */
+                $responder = $reader->getMethodAnnotation($method, "Globals\Annotations\WebResponder");
 
                 if ($responder != NULL) {
                     $this->addRoute($responder->path, new SubExecutor($instance, $method, $responder), $responder->method, $responder->name, $loaded);
                 }
             }
         }
+    }
+
+    public static function route($destination) {
+        header("Location: $destination");
     }
 }

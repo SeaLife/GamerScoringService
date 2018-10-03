@@ -30,7 +30,8 @@ class OutputManager extends SingletonFactory {
 
     private function applyGlobals ($arr) {
         // set if not set
-        if (!isset($arr["THEME"])) $arr["THEME"] = envvar("THEME", "sketchy");
+        if (!isset($arr["THEME"])) $arr["THEME"] = envvar("THEME", "flatly");
+        if (!isset($arr["PAGE_TITLE"])) $arr["PAGE_TITLE"] = "GamerScoring - Infoscore for Gamer's";
 
         // set always.
         $arr["PROFILE"] = envvar("PROFILE", "none");

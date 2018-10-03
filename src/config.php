@@ -8,3 +8,8 @@ If you'r not using docker, you can overwrite it in the root directory of the dep
 
 /*******************************/
 
+setenv("SYSTEM_DEBUG", TRUE);
+
+setenv("SYSTEM_PLUMBOK_CACHE_ENABLED", FALSE);
+
+setenv("THEME", "simplex");

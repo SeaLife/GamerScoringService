@@ -1,5 +1,5 @@
 credentials:
-  password_dev: &password_dev "%env(DATABASE_PASSWORD_DEV)%"
+  password_dev: &password_dev klopapier123
   password: &password "%env(DATABASE_PASSWORD_PROD)%"
 
 database:

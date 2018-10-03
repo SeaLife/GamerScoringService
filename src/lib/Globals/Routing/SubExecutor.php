@@ -1,9 +1,8 @@
 <?php
 
-namespace Api;
+namespace Globals\Routing;
 
-use Globals\RouteExecutor;
-use Globals\WebResponder;
+use Globals\Annotations\WebResponder;
 
 class SubExecutor implements RouteExecutor {
 

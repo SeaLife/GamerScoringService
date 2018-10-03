@@ -1,10 +1,10 @@
 <?php
 
-namespace Api;
+namespace WebService;
 
+use Globals\Annotations\WebResponder;
 use Globals\NotFoundResponder;
 use Globals\Routing;
-use Globals\WebResponder;
 use OpenApi\Annotations\Get;
 use OpenApi\Annotations\MediaType;
 use OpenApi\Annotations\Response;

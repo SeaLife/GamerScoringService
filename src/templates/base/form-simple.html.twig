@@ -1,0 +1,16 @@
+<form action="{{ location }}" method="post">
+    {% for k, v in items %}
+        <div class="form-group">
+            <label for="{{ v.name }}">{{ v.display }}</label>
+            <input type="{{ v.type }}" class="form-control" id="{{ v.name }}" name="{{ v.name }}"
+                   aria-describedby="{{ v.name }}" placeholder="{{ v.display }}">
+        </div>
+    {% endfor %}
+
+    <input type="hidden" value="1" name="{{ id }}" title="submit_check">
+
+    <br>
+    <button type="submit" class="btn btn-success">
+        {{ submit_button }}
+    </button>
+</form>

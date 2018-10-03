@@ -1,0 +1,30 @@
+{% include 'base/heading.html.twig' %}
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        Login Panel
+                    </div>
+                    <div class="card-body">
+                        {% if not state %}
+                            {{ login_form.view }}
+                            {% if error %}
+                                <hr>
+                                <div class="alert alert-warning">
+                                    Username or password wrong.
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-warning">
+                                You'r already logged in, use <a href="/logout">logout</a> first to login again ;)
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Api;
+namespace WebService;
 
 use OpenApi\Annotations\Info;
 use OpenApi\Annotations\Tag;
@@ -14,12 +14,12 @@ use OpenApi\Annotations\Tag;
  * )
  *
  * @Tag(
- *     name="Debug Controller",
- *     description="Debug Actions"
- * )
- * @Tag(
  *     name="Service Interface",
  *     description="Service Actions"
+ * )
+ * @Tag(
+ *     name="Debug Controller",
+ *     description="Debug Actions"
  * )
  */
 class SwaggerConfiguration {

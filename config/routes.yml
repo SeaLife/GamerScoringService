@@ -14,3 +14,10 @@ routes:
     anonymous: true
   method:
     - GET
+- name: swagger_servlet_ui
+  path: /api/swagger-ui
+  handler: WebService\SwaggerUiHandler
+  acl:
+    anonymous: true
+  method:
+  - GET

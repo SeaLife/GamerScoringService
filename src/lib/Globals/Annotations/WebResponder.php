@@ -1,6 +1,6 @@
 <?php
 
-namespace Globals;
+namespace Globals\Annotations;
 
 use OpenApi\Annotations\AbstractAnnotation;
 
