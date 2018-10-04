@@ -1,18 +1,32 @@
 {% include 'base/heading.html.twig' %}
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        Register :)
-                    </div>
-                    <div class="card-body">
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Register :)
+                </div>
+                <div class="card-body">
+
+                    {% if not success %}
                         {{ form.view }}
-                    </div>
+                    {% else %}
+                        <div class="alert alert-success">
+                            Registration successful :)
+                        </div>
+                    {% endif %}
+
+                    {% if exist %}
+                        <hr>
+                        <div class="alert alert-danger">
+                            Username already taken by another user.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>

@@ -2,12 +2,14 @@
 /** @noinspection SpellCheckingInspection */
 
 use Logging\FileLogger;
+use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 
 
 $__DEBUG = toBool(envvar("SYSTEM_DEBUG", "false"));
 
 if ($__DEBUG) {
+    ErrorHandler::register();
     ExceptionHandler::register();
 } else {
     set_exception_handler(function (Throwable $ex) {

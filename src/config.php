@@ -12,4 +12,6 @@ setenv("SYSTEM_DEBUG", TRUE);
 
 setenv("SYSTEM_PLUMBOK_CACHE_ENABLED", FALSE);
 
-setenv("THEME", "simplex");
+setenv("THEME", "united");
+
+setenv("PASSWORD_SECURITY", 5);

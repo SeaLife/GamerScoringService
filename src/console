@@ -2,12 +2,18 @@
 <?php
 /** @noinspection ALL */
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Console\AddRoleCommand;
+use Console\CheckAccess;
+use Console\ConfigureRoleCommand;
+use Console\ServerCommand;
+use Globals\DB;
+use Symfony\Component\Console\Application;
 
 /** @noinspection PhpIncludeInspection */
 
 include_once __DIR__ . '/bootstrap/globals.php';
 include_once __DIR__ . '/../vendor/autoload.php';
+include_once __DIR__ . "/config.php";
 
 define("__ROOT__", __DIR__);
 
@@ -15,8 +21,13 @@ include_once __DIR__ . '/bootstrap/classloader.php';
 
 ClassLoader::init();
 
-$app = new \Symfony\Component\Console\Application();
+DB::getInstance()->load(envvar("PROFILE", "dev"));
 
-$app->add(new \Console\ServerCommand());
+$app = new Application();
+
+$app->add(new ServerCommand());
+$app->add(new AddRoleCommand());
+$app->add(new ConfigureRoleCommand());
+$app->add(new CheckAccess());
 
 $app->run();

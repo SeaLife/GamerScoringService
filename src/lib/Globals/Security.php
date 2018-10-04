@@ -2,6 +2,7 @@
 
 namespace Globals;
 
+use App\Entity\User;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\DocParser;
@@ -15,6 +16,19 @@ class Security {
     }
 
     public static function hasPermission ($flag) {
+        $uid = $_SESSION["_UID"];
+        if (!empty($uid)) {
+            /** @var $user User */
+            $user = DB::getInstance()->getEntityManager()->getRepository(User::class)->findOneBy(
+                array('username' => $uid)
+            );
+
+            if ($user == NULL) {
+                self::markLogout();
+            } else {
+                return $user->isAllowed($flag);
+            }
+        }
         return FALSE;
     }
 
@@ -30,6 +44,7 @@ class Security {
             /** @var $file \SplFileInfo */
             /** @noinspection PhpIncludeInspection */
             include_once $file->getRealPath();
+
             $loaded = get_declared_classes();
             $loaded = $loaded[count($loaded) - 1];
 
@@ -54,11 +69,13 @@ class Security {
         return FALSE;
     }
 
-    public static function markLogin () {
+    public static function markLogin ($userId) {
         $_SESSION["_LOGIN"] = TRUE;
+        $_SESSION["_UID"]   = $userId;
     }
 
     public static function markLogout () {
         $_SESSION["_LOGIN"] = FALSE;
+        unset($_SESSION["_UID"]);
     }
 }

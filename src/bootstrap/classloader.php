@@ -48,7 +48,7 @@ ClassLoader::add(function ($name) {
     };
 
     $cacheLocation    = envvar("SYSTEM_PLUMBOK_LOCATION", __ROOT__ . "/../cache/");
-    $cacheEnabled     = toBool(envvar("SYSTEM_PLUMBOK_CACHE_ENABLED", "true"));
+    $cacheEnabled     = toBool(envvar("SYSTEM_PLUMBOK_CACHE_ENABLED", "false"));
     $plumbokEnabled   = toBool(envvar("SYSTEM_PLUMBOK_ENABLED", "true"));
     $plumbokOverwrite = toBool(envvar("SYSTEM_PLUMBOK_OVERWRITE_ORIGINAL", "true"));
 

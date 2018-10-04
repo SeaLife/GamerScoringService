@@ -18,7 +18,7 @@ class AppSecurityProvider extends AbstractSecurityProvider {
         $user = $entityManager->getRepository(User::class)->findOneBy(array('username' => $username));
 
         if ($user != NULL) {
-            if ($user->getPassword() == hash("sha256", $password)) {
+            if ($user->passwordsMatch($password) && $user->isEnabled()) {
                 return TRUE;
             }
         }

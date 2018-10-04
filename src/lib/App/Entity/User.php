@@ -13,6 +13,8 @@ use Plumbok\Annotation\Setter;
  * @method string getUsername()
  * @method void setUsername(string $username)
  * @method string getPassword()
+ * @method bool isEnabled()
+ * @method void setEnabled(bool $enabled)
  * @method string getOtpToken()
  * @method void setOtpToken(string $otp_token)
  * @method string getEmail()
@@ -29,6 +31,7 @@ class User {
      */
     public function __construct () {
         $this->created = new \DateTime();
+        $this->enabled = TRUE;
     }
 
     /**
@@ -42,7 +45,7 @@ class User {
 
     /**
      * @var string
-     * @ORM\Column(unique=true, type="string")
+     * @ORM\Column(unique=true, type="string", length=496)
      * @Getter()
      * @Setter()
      */
@@ -56,6 +59,14 @@ class User {
     private $password;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     * @Getter()
+     * @Setter()
+     */
+    private $enabled;
+
+    /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Getter()
@@ -65,7 +76,7 @@ class User {
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      * @Getter()
      * @Setter()
      */
@@ -88,6 +99,21 @@ class User {
     private $roles = array();
 
     public function setPassword ($password) {
-        $this->password = hash("sha256", $password);
+        $this->password = $this->hashPassword($password);
+    }
+
+    public function passwordsMatch ($password) {
+        return $this->hashPassword($password) == $this->getPassword();
+    }
+
+    private function hashPassword ($password) {
+        return hash("sha256", $password . $this->username . $this->created->format("d.m.Y"));
+    }
+
+    public function isAllowed ($flag) {
+        foreach ($this->roles as $role) {
+            if ($role->isAllowed($flag)) return TRUE;
+        }
+        return FALSE;
     }
 }

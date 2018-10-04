@@ -12,6 +12,8 @@
     "symfony/debug": "^4.1",
     "doctrine/orm": "2.5.x",
     "symfony/lock": "^4.1",
-    "spomky-labs/otphp": "^9.1"
+    "spomky-labs/otphp": "^9.1",
+    "google/recaptcha": "^1.2",
+    "nette/utils": "^2.5"
   }
 }

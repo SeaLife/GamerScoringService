@@ -1,16 +1,32 @@
 <form action="{{ location }}" method="post">
     {% for k, v in items %}
-        <div class="form-group">
-            <label for="{{ v.name }}">{{ v.display }}</label>
-            <input type="{{ v.type }}" class="form-control" id="{{ v.name }}" name="{{ v.name }}"
-                   aria-describedby="{{ v.name }}" placeholder="{{ v.display }}">
-        </div>
+        {% if v.type == 'captcha' %}
+            <div class="g-recaptcha form-field" data-sitekey="{{ captcha_client }}"></div>
+            {% if error_message and error_field == v.name %}
+                <br>
+                <div class="alert alert-danger">
+                    {{ error_message|raw }}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="form-group{% if error_field == v.name %} has-danger{% endif %}">
+                <label class="form-control-label" for="{{ v.name }}">{{ v.display }}</label>
+                <input type="{{ v.type }}" class="form-control{% if error_field == v.name %} is-invalid{% endif %}"
+                       id="{{ v.name }}" name="{{ v.name }}"
+                       aria-describedby="{{ v.name }}" value="{{ v.value }}" placeholder="{{ v.display }}">
+                {% if error_message and error_field == v.name %}
+                    <div class="invalid-feedback">{{ error_message|raw }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
     {% endfor %}
 
     <input type="hidden" value="1" name="{{ id }}" title="submit_check">
 
     <br>
-    <button type="submit" class="btn btn-success">
+    <button type="submit" class="btn btn-primary">
         {{ submit_button }}
     </button>
 </form>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>

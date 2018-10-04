@@ -9,8 +9,9 @@ use OpenApi\Annotations\AbstractAnnotation;
  */
 class WebResponder extends AbstractAnnotation {
 
-    public $method   = 'GET';
-    public $path     = '';
-    public $name     = 'unknown';
-    public $produces = '';
+    public $method             = 'GET';
+    public $path               = '';
+    public $name               = 'unknown';
+    public $produces           = '';
+    public $requiredPermission = '';
 }
