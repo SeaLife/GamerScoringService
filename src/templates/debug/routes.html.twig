@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="robots" content="noindex,nofollow"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
     <style>
         body {
             background-color: #F9F9F9;
@@ -218,6 +222,13 @@
                                 <span style="font-family: monospace;" class="trace-arguments">
                                 <a href="{{ v.route }}" style="text-decoration: none; color: #777;">{{ v.route }}</a>
                             </span>
+                            </td>
+                            <td>
+                                {% if v.permission %}
+                                    <span style="font-family: monospace;" class="trace-arguments">
+                                        <i class="fas fa-lock"></i> {{ v.permission }}
+                                    </span>
+                                {% endif %}
                             </td>
                             <td>
                             <span style="font-family: monospace;">

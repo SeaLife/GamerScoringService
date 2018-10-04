@@ -5,6 +5,7 @@ use Logging\FileLogger;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 
+error_reporting(0);
 
 $__DEBUG = toBool(envvar("SYSTEM_DEBUG", "false"));
 

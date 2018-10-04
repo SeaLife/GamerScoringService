@@ -8,6 +8,7 @@ use Doctrine\Common\Annotations\DocParser;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Globals\Routing\RouteExecutor;
+use Globals\Routing\SecuredExecutor;
 use Globals\Routing\SubExecutor;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
@@ -21,8 +22,8 @@ class Routing extends SingletonFactory {
         return $this->routes;
     }
 
-    public function addRoute ($route, RouteExecutor $executor, $method = "GET", $name = "unknown", $source = 'routes.yml') {
-        array_push($this->routes, array("route" => $route, "executor" => $executor, "method" => $method, "name" => $name, "source" => $source));
+    public function addRoute ($route, RouteExecutor $executor, $method = "GET", $name = "unknown", $source = 'routes.yml', $permission = '') {
+        array_push($this->routes, array("route" => $route, "executor" => $executor, "method" => $method, "name" => $name, "source" => $source, "permission" => $permission));
     }
 
     public function init () {
@@ -30,7 +31,9 @@ class Routing extends SingletonFactory {
 
         foreach ($routes["routes"] as $k => $v) {
             if (class_exists($v["handler"])) {
-                $this->addRoute($v["path"], new $v["handler"](), orv(@$v["method"], "GET"), $v["name"]);
+                $executor = new SecuredExecutor(new $v["handler"](), orv($v["requiredPermission"], ''));
+
+                $this->addRoute($v["path"], $executor, orv(@$v["method"], "GET"), $v["name"], 'routes.yml', orv($v["requiredPermission"], ''));
             }
             else {
                 $this->getLogger()->warning("Executor '{}' for Path '{}'@'{}' does not exist", array($v["handler"], $v["name"], $v["path"]));
@@ -59,7 +62,7 @@ class Routing extends SingletonFactory {
         switch ($routeInfo[0]) {
             default:
             case Dispatcher::NOT_FOUND:
-                NotFoundResponder::run();
+                ErrorResponder::error404();
                 break;
 
             case Dispatcher::FOUND:
@@ -97,13 +100,29 @@ class Routing extends SingletonFactory {
                 $responder = $reader->getMethodAnnotation($method, "Globals\Annotations\WebResponder");
 
                 if ($responder != NULL) {
-                    $this->addRoute($responder->path, new SubExecutor($instance, $method, $responder), $responder->method, $responder->name, $loaded);
+                    $this->addRoute($responder->path, new SubExecutor($instance, $method, $responder), $responder->method, $responder->name, $loaded, $responder->requiredPermission);
                 }
             }
         }
     }
 
-    public static function route($destination) {
+    public function listAllRequiredPermissions () {
+        $distinctList = array();
+
+        $routes = Routing::getRoutes();
+
+        foreach ($routes as $route) {
+            if (!empty($route["permission"])) {
+                if (!in_array($route["permission"], $distinctList)) {
+                    array_push($distinctList, $route["permission"]);
+                }
+            }
+        }
+
+        return $distinctList;
+    }
+
+    public static function route ($destination) {
         header("Location: $destination");
     }
 }

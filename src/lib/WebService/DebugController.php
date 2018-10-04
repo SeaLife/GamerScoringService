@@ -3,7 +3,7 @@
 namespace WebService;
 
 use Globals\Annotations\WebResponder;
-use Globals\NotFoundResponder;
+use Globals\ErrorResponder;
 use Globals\Routing;
 use OpenApi\Annotations\Get;
 use OpenApi\Annotations\MediaType;
@@ -15,7 +15,7 @@ use Output\Http\OutputManager;
 class DebugController {
 
     /**
-     * @WebResponder(path="/api/debug/routes", name="Returns all configured routes as json/html", method="GET")
+     * @WebResponder(path="/api/debug/routes", name="Returns all configured routes as json/html", method="GET", requiredPermission="DX")
      * @Get(
      *     tags={"Debug Controller"},
      *     path="/api/debug/routes",
@@ -26,7 +26,7 @@ class DebugController {
      */
     public function debugEndpoints () {
         if (!toBool(envvar("SYSTEM_DEBUG")) && envvar("PROFILE") != "dev") {
-            NotFoundResponder::run();
+            ErrorResponder::error404();
             return;
         }
 

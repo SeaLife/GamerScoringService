@@ -2,22 +2,18 @@ routes:
 - name: root_servlet
   path: /
   handler: WebService\RootHandler
-  acl:
-    anonymouse: true # is default if no 'roles' or 'permissions' flag is added to 'acl'
   method:
     - GET
     - POST
 - name: swagger_servlet
   path: /api/docs
   handler: WebService\ApiHandler
-  acl:
-    anonymous: true
+  requiredPermission: API
   method:
     - GET
 - name: swagger_servlet_ui
   path: /api/swagger-ui
   handler: WebService\SwaggerUiHandler
-  acl:
-    anonymous: true
+  requiredPermission: API
   method:
   - GET

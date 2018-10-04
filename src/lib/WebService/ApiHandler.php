@@ -13,7 +13,6 @@ use Globals\Routing\RouteExecutor;
  */
 class ApiHandler implements RouteExecutor {
     public function doRun ($method, $vars) {
-
         $headers = getallheaders();
         $accept  = orv($headers["Accept"], "application/json");
         $openapi = \OpenApi\scan(__DIR__);

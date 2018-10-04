@@ -33,7 +33,7 @@ class SecurityController {
         $form->add("text", "username", "Username");
         $form->add("password", "password", "Password");
 
-        $form->enableCaptcha();
+        #$form->enableCaptcha();
 
         if ($form->isSubmitted()) {
             $success = Security::doLogin($form->get("username"), $form->get("password"));
@@ -85,7 +85,7 @@ class SecurityController {
         $form->add("password", "password1", "Password", $passwordValidator);
         $form->add("password", "password2", "Repeat password", $passwordValidator);
 
-        $form->enableCaptcha();
+        #$form->enableCaptcha();
 
         $isValid = $form->isValid();
 

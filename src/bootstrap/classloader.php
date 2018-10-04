@@ -91,6 +91,8 @@ ClassLoader::add(function ($name) {
                 include_once $cacheFile;
             } catch (InvalidArgumentException $e) {
                 include_once $phpFile;
+            } catch (ErrorException $e) {
+                include_once $phpFile;
             } catch (Error $e) {
                 include_once $phpFile;
             }
