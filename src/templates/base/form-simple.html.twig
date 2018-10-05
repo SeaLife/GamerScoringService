@@ -8,6 +8,20 @@
                     {{ error_message|raw }}
                 </div>
             {% endif %}
+        {% elseif v.type == 'dropdown' %}
+            <div class="form-group{% if error_field == v.name %} has-danger{% endif %}">
+                <label class="form-control-label" for="{{ v.name }}">{{ v.display }}</label>
+
+                <select class="form-control" name="{{ v.name }}" id="{{ v.name }}">
+                    {% for _, l in v.value %}
+                        <option {% if _ == 0 %}selected{% endif %} value="{{ l }}">{{ l }}</option>
+                    {% endfor %}
+                </select>
+
+                {% if error_message and error_field == v.name %}
+                    <div class="invalid-feedback">{{ error_message|raw }}</div>
+                {% endif %}
+            </div>
         {% else %}
             <div class="form-group{% if error_field == v.name %} has-danger{% endif %}">
                 <label class="form-control-label" for="{{ v.name }}">{{ v.display }}</label>

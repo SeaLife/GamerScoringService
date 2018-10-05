@@ -1,0 +1,87 @@
+{% include 'base/heading.html.twig' %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>Role Administration</h3>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th width="20px">#ID</th>
+                        <th width="10%">Name</th>
+                        <th>Parent</th>
+                        <th width="60%">Permissions</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for k, v in roles %}
+                        <tr id="role-{{ v.getId() }}">
+                            <td style="font-family: monospace;">{{ v.getId() }}</td>
+                            <td style="font-family: monospace;">{{ v.getName() }}</td>
+                            <td style="font-family: monospace;">
+                                {% if v.getParent != null %}
+                                    {{ v.getParent().getName() }}
+                                {% else %}
+                                    <i>no parent role</i>
+                                {% endif %}
+                            </td>
+                            <td style="font-family: monospace;">{{ v.getFlags|join(", ") }}</td>
+                            <td>
+                                <a href="/admin/role/{{ v.getId }}"><i class="fas fa-pencil-alt"></i></a> &nbsp;
+                                <a style="cursor: pointer;" data-roleId="{{ v.getId() }}" class="delete-button"><i
+                                            class="fas fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Add a new Role
+                </div>
+                <div class="card-body">
+                    {{ add_form.view }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $().ready(function () {
+        function removeRole(id) {
+            console.log("Removal of role " + id);
+
+            $.ajax({
+                url: '/admin/role/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    console.log(result);
+
+                    $("#role-" + id).remove();
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            });
+        }
+
+        $(".delete-button").each(function () {
+            let btn = $(this);
+            let roleId = btn.data("roleid");
+
+            console.log(roleId);
+
+            btn.click(function () {
+                removeRole(roleId);
+            });
+        });
+    });
+</script>

@@ -4,6 +4,7 @@ namespace WebService;
 
 use App\Entity\User;
 use Globals\DB;
+use Globals\MenuHandler;
 use Globals\Routing;
 use Globals\Security;
 use Globals\Annotations\WebResponder;
@@ -22,6 +23,18 @@ use Output\Http\Validator\StringLengthValidator;
  */
 class SecurityController {
 
+    public function __construct () {
+        MenuHandler::getInstance()->add("Login", "/login", function () {
+            return !Security::isLoggedIn();
+        });
+        MenuHandler::getInstance()->add("Register", "/register", function () {
+            return !Security::isLoggedIn();
+        });
+        MenuHandler::getInstance()->add("Logout", "/logout", function () {
+            return Security::isLoggedIn();
+        });
+    }
+
     /**
      * @WebResponder(method={"POST", "GET"}, path="/login", name="View-Layer for the Login-Component")
      */
@@ -33,9 +46,11 @@ class SecurityController {
         $form->add("text", "username", "Username");
         $form->add("password", "password", "Password");
 
-        #$form->enableCaptcha();
+        $form->enableCaptcha();
 
-        if ($form->isSubmitted()) {
+        $isValid = $form->isValid();
+
+        if ($form->isSubmitted() && $isValid) {
             $success = Security::doLogin($form->get("username"), $form->get("password"));
 
             if ($success) {
@@ -85,7 +100,7 @@ class SecurityController {
         $form->add("password", "password1", "Password", $passwordValidator);
         $form->add("password", "password2", "Repeat password", $passwordValidator);
 
-        #$form->enableCaptcha();
+        $form->enableCaptcha();
 
         $isValid = $form->isValid();
 

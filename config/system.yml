@@ -1,0 +1,7 @@
+env:
+  THEME: litera
+  PROFILE: dev
+  SYSTEM_DEBUG: true
+scoring:
+  providers:
+    - "\\Scoring\\SteamVacScoringProvider"

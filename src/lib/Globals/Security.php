@@ -11,6 +11,9 @@ use Symfony\Component\Finder\Finder;
 
 class Security {
 
+    /** @var $localUser User */
+    private static $localUser = NULL;
+
     public static function isLoggedIn () {
         return orv($_SESSION["_LOGIN"], FALSE);
     }
@@ -18,15 +21,16 @@ class Security {
     public static function hasPermission ($flag) {
         $uid = $_SESSION["_UID"];
         if (!empty($uid)) {
-            /** @var $user User */
-            $user = DB::getInstance()->getEntityManager()->getRepository(User::class)->findOneBy(
-                array('username' => $uid)
-            );
+            if (self::$localUser == NULL) {
+                self::$localUser = DB::getInstance()->getEntityManager()->getRepository(User::class)->findOneBy(
+                    array('username' => $uid)
+                );
+            }
 
-            if ($user == NULL) {
+            if (self::$localUser == NULL) {
                 self::markLogout();
             } else {
-                return $user->isAllowed($flag);
+                return self::$localUser->isAllowed($flag);
             }
         }
         return FALSE;

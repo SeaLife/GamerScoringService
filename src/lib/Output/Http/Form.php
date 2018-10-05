@@ -27,7 +27,7 @@ class Form {
             "name"      => $name,
             "display"   => $display,
             "validator" => $validator,
-            "value"     => $val != NULL ? $val : isset($_POST[$name]) ? $_POST[$name] : ""
+            "value"     => orv(orv($val, $_POST[$name]), "")
         ));
     }
 

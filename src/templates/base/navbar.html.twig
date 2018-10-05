@@ -11,9 +11,23 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/">Home </a>
                 </li>
+                <!--
                 <li class="nav-item">
                     <a class="nav-link active" href="/api/debug/routes">Routen (debug)</a>
                 </li>
+                -->
+
+                {% if HANDLER_MENU %}
+                    {% for k, v in HANDLER_MENU %}
+                        {% if v.isEnabled.run() == true %}
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ v.path }}">
+                                    {{ v.name }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="PlayerID" aria-label="Search">

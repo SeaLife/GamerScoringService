@@ -4,7 +4,9 @@ namespace WebService;
 
 use Globals\Annotations\WebResponder;
 use Globals\ErrorResponder;
+use Globals\MenuHandler;
 use Globals\Routing;
+use Globals\Security;
 use OpenApi\Annotations\Get;
 use OpenApi\Annotations\MediaType;
 use OpenApi\Annotations\Response;
@@ -14,8 +16,15 @@ use Output\Http\OutputManager;
 
 class DebugController {
 
+    public function __construct () {
+        MenuHandler::getInstance()->add("(DX) Routes", "/api/debug/routes", function () {
+            return Security::hasPermission('DX');
+        });
+    }
+
     /**
-     * @WebResponder(path="/api/debug/routes", name="Returns all configured routes as json/html", method="GET", requiredPermission="DX")
+     * @WebResponder(path="/api/debug/routes", name="Returns all configured routes as json/html", method="GET",
+     *                                         requiredPermission="DX")
      * @Get(
      *     tags={"Debug Controller"},
      *     path="/api/debug/routes",

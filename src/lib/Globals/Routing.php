@@ -27,9 +27,9 @@ class Routing extends SingletonFactory {
     }
 
     public function init () {
-        $routes = Yaml::parseFile(__DIR__ . "/../../../config/routes.yml");
+        $routes = ConfigurationManager::getInstance()->getConfigContext()['routes'];
 
-        foreach ($routes["routes"] as $k => $v) {
+        foreach ($routes as $k => $v) {
             if (class_exists($v["handler"])) {
                 $executor = new SecuredExecutor(new $v["handler"](), orv($v["requiredPermission"], ''));
 
