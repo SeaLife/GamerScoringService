@@ -1,8 +1,8 @@
 <?php
 /** @noinspection ALL */
 
-
 function orv ($val, $or) {
+    if (is_bool($val)) return $val;
     if (!isset($val) || empty($val)) {
         return $or;
     }
@@ -20,8 +20,7 @@ function envvar ($key, $def = NULL) {
         $_ENV[$key] = $def;
     }
 
-    if (file_exists(__ROOT__ . "/envvar") && is_dir(__ROOT__ . "/envvar"))
-        file_put_contents(__ROOT__ . "/envvar/" . $key . ".env", $val);
+    if (file_exists(__ROOT__ . "/envvar") && is_dir(__ROOT__ . "/envvar")) file_put_contents(__ROOT__ . "/envvar/" . $key . ".env", $val);
 
     return $val;
 }

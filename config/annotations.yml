@@ -1,0 +1,4 @@
+annotations:
+  classes:
+    - "\\Globals\\Annotations\\SecurityProvider"
+    - "\\Globals\\Annotations\\WebResponder"

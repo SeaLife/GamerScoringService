@@ -3,6 +3,7 @@
 namespace Scoring;
 
 use App\Entity\ScoreEntry;
+use GuzzleHttp\Exception\ClientException;
 use Zyberspace\SteamWebApi\Client;
 use Zyberspace\SteamWebApi\Interfaces\ISteamUser;
 
@@ -16,11 +17,15 @@ class SteamVacScoringProvider implements ScoreProvider {
         $steamClient = new Client(envvar("STEAM_KEY", ''));
         $steamUser   = new ISteamUser($steamClient);
 
-        $response = $steamUser->GetPlayerBansV1($playerUID);
+        try {
+            $response = $steamUser->GetPlayerBansV1($playerUID);
 
-        $arr = json_decode(json_encode($response), TRUE);
+            $arr = json_decode(json_encode($response), TRUE);
 
-        return $arr["players"][0];
+            return $arr["players"][0];
+        } catch (ClientException $e) {
+            return null;
+        }
     }
 
     public function processScoringData (ScoreEntry $entry) {
@@ -36,7 +41,6 @@ class SteamVacScoringProvider implements ScoreProvider {
         if ($data['NumberOfVACBans'] > 0) {
             array_push($result, ScoringResult::of('Steam::NumberVACBans::' . $data['NumberOfVACBans'], 100 * $data['NumberOfVACBans'], 'Steam', 'Steam'));
         }
-
 
         return $result;
     }

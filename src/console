@@ -18,8 +18,9 @@ include_once __DIR__ . "/config.php";
 define("__ROOT__", __DIR__);
 
 include_once __DIR__ . '/bootstrap/classloader.php';
+include_once __DIR__ . '/bootstrap/init.php';
 
-ClassLoader::init();
+Globals\ConfigurationManager::getInstance()->init();
 
 DB::getInstance()->load(envvar("PROFILE", "dev"));
 

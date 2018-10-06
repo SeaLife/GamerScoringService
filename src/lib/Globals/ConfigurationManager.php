@@ -2,6 +2,7 @@
 
 namespace Globals;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Util\SingletonFactory;
@@ -27,6 +28,15 @@ class ConfigurationManager extends SingletonFactory {
             foreach ($envData as $k => $v) {
                 setenv($k, $v);
             }
+        }
+
+        $this->registerAnnotations();
+    }
+
+    private function registerAnnotations() {
+        foreach($this->getConfigContext()['annotations']['classes'] as $cl) {
+            $this->getLogger()->debug("Loading Annotation-Class {}", array($cl));
+            AnnotationRegistry::loadAnnotationClass($cl);
         }
     }
 

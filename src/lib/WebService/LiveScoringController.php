@@ -23,7 +23,12 @@ class LiveScoringController {
         $entries = array();
 
         foreach ($providers as $provider) {
-            $data  = $provider->fetchScoringData($steamId);
+            $data = $provider->fetchScoringData($steamId);
+
+            if ($data != NULL) {
+                continue;
+            }
+
             $entry = new ScoreEntry();
             $entry->setScoreData(json_encode($data));
 
@@ -36,12 +41,6 @@ class LiveScoringController {
             $entries = array_merge($entries, $result);
         }
 
-        echo json_encode(array(
-            "playerId" => $steamId,
-            "score"    => $score,
-            "maxScore" => $maxScore,
-            "trusty"   => round($score / $maxScore * 100, 2),
-            "entries"  => $entries
-        ), JSON_PRETTY_PRINT);
+        echo json_encode(array("playerId" => $steamId, "score" => $score, "maxScore" => $maxScore, "trusty" => round($score / $maxScore * 100, 2), "entries" => $entries), JSON_PRETTY_PRINT);
     }
 }

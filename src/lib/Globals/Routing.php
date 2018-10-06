@@ -2,16 +2,12 @@
 
 namespace Globals;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-use Doctrine\Common\Annotations\DocParser;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Globals\Annotations\WebResponder;
 use Globals\Routing\RouteExecutor;
 use Globals\Routing\SecuredExecutor;
 use Globals\Routing\SubExecutor;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Yaml;
 use Util\SingletonFactory;
 
 class Routing extends SingletonFactory {
@@ -74,36 +70,25 @@ class Routing extends SingletonFactory {
     }
 
     public function findRoutes () {
-        AnnotationRegistry::registerFile(__DIR__ . "/../Globals/Annotations/WebResponder.php");
-
-        $finder = Finder::create()->files()->name('*Router.php')->name('*Controller.php')->in(__DIR__ . "/../");
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $reader = new AnnotationReader(new DocParser());
+        $classes = AnnotationHelper::getInstance()->findAllMethodsAnnotatedWith("Globals\Annotations\WebResponder");
 
-        foreach ($finder as $file) {
-            /** @var $file \SplFileInfo */
-            /** @noinspection PhpIncludeInspection */
-            include_once $file->getRealPath();
-            $loaded = get_declared_classes();
-            $loaded = $loaded[count($loaded) - 1];
+        foreach ($classes as $annotation) {
+            $instance = $this->getSingleInstanceOf($annotation->getClass());
 
-            /** @noinspection PhpUnhandledExceptionInspection */
-            $rfClass = new \ReflectionClass($loaded);
+            /** @var $responder WebResponder */
+            $responder = $annotation->getAnnotation();
+            $executor  = new SubExecutor($instance, $annotation->getMethod(), $responder);
 
-            $methods = $rfClass->getMethods();
-
-            $instance = new $loaded();
-
-            foreach ($methods as $method) {
-                /** @var $responder \Globals\Annotations\WebResponder */
-                $responder = $reader->getMethodAnnotation($method, "Globals\Annotations\WebResponder");
-
-                if ($responder != NULL) {
-                    $this->addRoute($responder->path, new SubExecutor($instance, $method, $responder), $responder->method, $responder->name, $loaded, $responder->requiredPermission);
-                }
-            }
+            $this->addRoute($annotation->getAnnotation()->path, $executor, $responder->method, $responder->name, $annotation->getClass()->getName(), $responder->requiredPermission);
         }
+    }
+
+    public function run() {
+        $this->init();
+        $this->findRoutes();
+        $this->exec();
     }
 
     public function listAllRequiredPermissions () {
@@ -125,4 +110,16 @@ class Routing extends SingletonFactory {
     public static function route ($destination) {
         header("Location: $destination");
     }
+
+    private function getSingleInstanceOf (\ReflectionClass $class) {
+        if (isset($this->__instances[md5($class)])) {
+            return $this->__instances[md5($class)];
+        }
+
+        $this->__instances[md5($class)] = $class->newInstance();
+
+        return $this->getSingleInstanceOf($class);
+    }
+
+    private $__instances = array();
 }

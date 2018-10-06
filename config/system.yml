@@ -2,6 +2,8 @@ env:
   THEME: litera
   PROFILE: dev
   SYSTEM_DEBUG: true
+  STEAM_KEY: none
+  SYSTEM_LOGGING_LEVEL: INFO
 scoring:
   providers:
     - "\\Scoring\\SteamVacScoringProvider"

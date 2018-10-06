@@ -1,0 +1,21 @@
+cache:
+  enabled: true
+  providers:
+    - provider-type: 'redis'
+      enabled: false
+      config:
+        url: 'redis://localhost'
+    - provider-type: 'fs'
+      enabled: true
+      config:
+        dir: '{BASE}/cache'
+    - provider-type: 'db'
+      enabled: false
+      config:
+        url: 'mysql:host=db.example.com;dbname=app_cache'
+        user: 'cache_user'
+        pass: 'cache_pass'
+    - provider-type: 'sqlite'
+      enabled: true
+      config:
+        location: '{BASE}/cache/cache.db'

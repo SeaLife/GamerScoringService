@@ -1,7 +1,6 @@
 <?php
 /** @noinspection PhpIncludeInspection */
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use PhpParser\PrettyPrinter\Standard;
 use Plumbok\Compiler;
 use Plumbok\Compiler\NodeFinder;
@@ -35,8 +34,6 @@ class ClassLoader {
         };
 
         spl_autoload_register($loader);
-
-        AnnotationRegistry::registerLoader($loader);
     }
 }
 
@@ -102,3 +99,5 @@ ClassLoader::add(function ($name) {
         }
     }
 });
+
+ClassLoader::init();
