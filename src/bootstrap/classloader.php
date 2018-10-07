@@ -35,68 +35,65 @@ class ClassLoader {
 
         spl_autoload_register($loader);
     }
+
+    public static function compilePlumbok ($name) {
+
+        $file = __ROOT__ . "/lib/" . ClassLoader::fixPath($name) . ".php";
+
+        $enabled  = toBool(envvar('PLUMBOK', 'on'));
+        $dev      = toBool(envvar('PLUMBOK_DEV', 'on'));
+        $caching  = toBool(envvar('PLUMBOK_CACHE', 'on'));
+        $location = envvar('PLUMBOK_LOCATION', __ROOT__ . "/../cache");
+
+        if (!file_exists($file)) return FALSE;
+
+        if (!file_exists($location)) mkdir($location);
+
+        if (!$enabled) return $file;
+
+        $cacheFile = $location . '/' . self::fixPath($name, "_") . ".php";
+
+        if (file_exists($cacheFile) && $caching) {
+            return $cacheFile;
+        }
+
+        try {
+            $plumbokCompiler = new Compiler();
+            $nodes           = $plumbokCompiler->compile($file);
+            $serialize       = new Standard();
+            $fileContent     = $serialize->prettyPrint($nodes);
+
+            if (empty(trim($fileContent))) {
+                throw new InvalidArgumentException('File cannot be parsed, aborting and including default.');
+            }
+
+            if ($dev) {
+                $tagsUpdater = new TagsUpdater(new NodeFinder());
+                $tagsUpdater->applyNodes($file, ...$nodes);
+            }
+
+            file_put_contents($cacheFile, "<?php\n\n" . $fileContent);
+
+            return $cacheFile;
+        } catch (InvalidArgumentException $e) {
+        } catch (ErrorException $e) {
+        } catch (Error $e) {
+        }
+
+        return $file;
+    }
+
+    public static function fixPath ($path, $separator = "/") {
+        $path = str_replace("\\", $separator, $path);
+        return str_replace("/", $separator, $path);
+    }
 }
 
 ClassLoader::add(function ($name) {
+    $file = ClassLoader::compilePlumbok($name);
 
-    $pathCorrect = function ($path, $replace = "/") {
-        $str = str_replace("\\", $replace, $path);
-        return str_replace("/", $replace, $str);
-    };
-
-    $cacheLocation    = envvar("SYSTEM_PLUMBOK_LOCATION", __ROOT__ . "/../cache/");
-    $cacheEnabled     = toBool(envvar("SYSTEM_PLUMBOK_CACHE_ENABLED", "false"));
-    $plumbokEnabled   = toBool(envvar("SYSTEM_PLUMBOK_ENABLED", "true"));
-    $plumbokOverwrite = toBool(envvar("SYSTEM_PLUMBOK_OVERWRITE_ORIGINAL", "true"));
-
-    if (!file_exists($cacheLocation)) mkdir($cacheLocation);
-
-    $phpFile   = __ROOT__ . "/lib/" . $pathCorrect($name) . ".php";
-    $cacheFile = $cacheLocation . $pathCorrect($name, "_") . ".php";
-
-    /**
-     * Include Cached-File :)
-     */
-    if ($cacheEnabled && $plumbokEnabled && file_exists($cacheFile)) {
-        include_once $cacheFile;
-        return;
-    }
-
-    if (file_exists($phpFile)) {
-        if ($plumbokEnabled) {
-            try {
-                $plumbokCompiler = new Compiler();
-                $nodes           = $plumbokCompiler->compile($phpFile);
-                $serialize       = new Standard();
-                $fileContent     = $serialize->prettyPrint($nodes);
-
-                /**
-                 * Include source file if plumbok could not create a class
-                 */
-                if (empty(trim($fileContent))) {
-                    include_once $phpFile;
-                    return;
-                }
-
-                file_put_contents($cacheFile, "<?php \n\n" . $fileContent);
-
-                if ($plumbokOverwrite) {
-                    $tagsUpdater = new TagsUpdater(new NodeFinder());
-                    $tagsUpdater->applyNodes($phpFile, ...$nodes);
-                }
-
-                include_once $cacheFile;
-            } catch (InvalidArgumentException $e) {
-                include_once $phpFile;
-            } catch (ErrorException $e) {
-                include_once $phpFile;
-            } catch (Error $e) {
-                include_once $phpFile;
-            }
-        }
-        else {
-            include_once $phpFile;
-        }
+    if ($file) {
+        include_once $file;
     }
 });
 

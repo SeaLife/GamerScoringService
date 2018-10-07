@@ -18,8 +18,8 @@ class Routing extends SingletonFactory {
         return $this->routes;
     }
 
-    public function addRoute ($route, RouteExecutor $executor, $method = "GET", $name = "unknown", $source = 'routes.yml', $permission = '') {
-        array_push($this->routes, array("route" => $route, "executor" => $executor, "method" => $method, "name" => $name, "source" => $source, "permission" => $permission));
+    public function addRoute ($route, RouteExecutor $executor, $method = "GET", $name = "unknown", $source = 'routes.yml', $permission = '', $accept = 'any') {
+        array_push($this->routes, array("route" => $route, "executor" => $executor, "method" => $method, "name" => $name, "source" => $source, "permission" => $permission, 'accept' => $accept));
     }
 
     public function init () {
@@ -29,7 +29,7 @@ class Routing extends SingletonFactory {
             if (class_exists($v["handler"])) {
                 $executor = new SecuredExecutor(new $v["handler"](), orv($v["requiredPermission"], ''));
 
-                $this->addRoute($v["path"], $executor, orv(@$v["method"], "GET"), $v["name"], 'routes.yml', orv($v["requiredPermission"], ''));
+                $this->addRoute($v["path"], $executor, orv(@$v["method"], "GET"), $v["name"], 'routes.yml', orv($v["requiredPermission"], ''), orv($v["accept"], 'any'));
             }
             else {
                 $this->getLogger()->warning("Executor '{}' for Path '{}'@'{}' does not exist", array($v["handler"], $v["name"], $v["path"]));
@@ -72,7 +72,7 @@ class Routing extends SingletonFactory {
     public function findRoutes () {
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $classes = AnnotationHelper::getInstance()->findAllMethodsAnnotatedWith("Globals\Annotations\WebResponder");
+        $classes = AnnotationHelper::getInstance()->findAllMethodsAnnotatedWith(WebResponder::class);
 
         foreach ($classes as $annotation) {
             $instance = $this->getSingleInstanceOf($annotation->getClass());
@@ -81,11 +81,11 @@ class Routing extends SingletonFactory {
             $responder = $annotation->getAnnotation();
             $executor  = new SubExecutor($instance, $annotation->getMethod(), $responder);
 
-            $this->addRoute($annotation->getAnnotation()->path, $executor, $responder->method, $responder->name, $annotation->getClass()->getName(), $responder->requiredPermission);
+            $this->addRoute($annotation->getAnnotation()->path, $executor, $responder->method, $responder->name, $annotation->getClass()->getName(), $responder->requiredPermission, $responder->accept);
         }
     }
 
-    public function run() {
+    public function run () {
         $this->init();
         $this->findRoutes();
         $this->exec();
