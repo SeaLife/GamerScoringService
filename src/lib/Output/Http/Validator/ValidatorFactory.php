@@ -15,6 +15,7 @@ class ValidatorFactory implements FormFieldValidator {
 
     public function __construct () {
         $this->chain = new ChainValidator();
+        $this->chain->runAllValidators();
     }
 
     public function isLongerThan ($int) {
@@ -53,7 +54,12 @@ class ValidatorFactory implements FormFieldValidator {
     }
 
     public function isNotContainedWithinThePawnedPasswordDatabase ($limit = 0) {
-        $this->chain->add(new PwnedPasswordValidator($limit));
+        $this->chain->add(new PawnedPasswordValidator($limit));
+        return $this;
+    }
+
+    public function isEqualTo ($str, $message = 'Items are not equal') {
+        $this->chain->add(new EqualsValidator($str, $message));
         return $this;
     }
 

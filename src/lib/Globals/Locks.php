@@ -6,6 +6,9 @@ use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 use Util\SingletonFactory;
 
+/**
+ * Locking Manager (to access Locks)
+ */
 class Locks extends SingletonFactory {
 
     /** @var $factory Factory */
@@ -18,6 +21,10 @@ class Locks extends SingletonFactory {
         $this->factory = $factory;
     }
 
+    /**
+     * @param $lock
+     * @return \Symfony\Component\Lock\Lock
+     */
     public function getLock ($lock) {
         return $this->factory->createLock($lock, 30);
     }

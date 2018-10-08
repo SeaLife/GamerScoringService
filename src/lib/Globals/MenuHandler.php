@@ -5,6 +5,9 @@ namespace Globals;
 use Util\CallableWrapper;
 use Util\SingletonFactory;
 
+/**
+ * Handler for managing the menu.
+ */
 class MenuHandler extends SingletonFactory {
 
     private $menuItems = array();

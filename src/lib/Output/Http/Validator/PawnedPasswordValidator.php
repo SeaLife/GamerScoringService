@@ -6,7 +6,7 @@ use Globals\Exception\ValidationException;
 use Output\Http\Form;
 use Output\Http\FormFieldValidator;
 
-class PwnedPasswordValidator implements FormFieldValidator {
+class PawnedPasswordValidator implements FormFieldValidator {
 
     private $limitUsage = 0;
 

@@ -13,7 +13,6 @@ use Output\Http\Form;
 use Output\Http\OutputManager;
 use Output\Http\Validator\ChainValidator;
 use Output\Http\Validator\EmailValidator;
-use Output\Http\Validator\EqualsValidator;
 use Output\Http\Validator\HasNoDatabaseEntryValidator;
 use Output\Http\Validator\PasswordValidator;
 use Output\Http\Validator\StringLengthValidator;
@@ -81,8 +80,8 @@ class SecurityController {
         $content = new Content("web/register.html.twig");
 
         $passwordValidator = new PasswordValidator(envvar("PASSWORD_SECURITY", 3));
-        $passwordValidator->add(new EqualsValidator($_POST["password1"], "Passwords do not match"));
-        $passwordValidator->add(new EqualsValidator($_POST["password2"], "Passwords do not match"));
+        $passwordValidator->getFactory()->isEqualTo($_POST["password1"], "Passwords do not match");
+        $passwordValidator->getFactory()->isEqualTo($_POST["password2"], "Passwords do not match");
 
         $userValidator = new ChainValidator(
             new StringLengthValidator(3),

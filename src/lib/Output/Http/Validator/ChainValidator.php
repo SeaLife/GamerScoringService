@@ -2,12 +2,15 @@
 
 namespace Output\Http\Validator;
 
+use Globals\Exception\ValidationException;
 use Output\Http\Form;
 use Output\Http\FormFieldValidator;
 
 class ChainValidator implements FormFieldValidator {
     /** @var $validators FormFieldValidator[] */
     protected $validators = array();
+    /** @var bool */
+    private $runAll = FALSE;
 
     /**
      * ChainValidator constructor.
@@ -27,13 +30,25 @@ class ChainValidator implements FormFieldValidator {
     }
 
     public function isValid (Form $form, $field) {
-        foreach ($this->validators as $validator) {
-            $var = $validator->isValid($form, $field);
+        $exceptionMessage = '';
 
-            if (is_bool($var) && !$var) {
-                return FALSE;
+        foreach ($this->validators as $validator) {
+            try {
+                $validator->isValid($form, $field);
+            } catch (ValidationException $e) {
+                if (!$this->runAll) throw $e;
+                $exceptionMessage .= $e->getMessage() . "\n";
             }
         }
+
+        if (!empty($exceptionMessage)) {
+            throw new ValidationException($exceptionMessage);
+        }
+
         return TRUE;
+    }
+
+    public function runAllValidators () {
+        $this->runAll = TRUE;
     }
 }

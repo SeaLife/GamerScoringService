@@ -1,5 +1,5 @@
 env:
-  THEME: litera
+  THEME: united
   PROFILE: dev
   SYSTEM_DEBUG: true
   STEAM_KEY: none

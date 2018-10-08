@@ -6,10 +6,19 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Util\SingletonFactory;
 
+/**
+ * Database Interface for the application.
+ */
 class DB extends SingletonFactory {
 
     private $entityManager;
 
+    /**
+     * Load a database profile configuration (dev, prod, ...)
+     *
+     * @param string $profile to be loaded.
+     * @throws \Doctrine\ORM\ORMException
+     */
     public function load ($profile) {
         if (empty($profile)) {
             throw new \InvalidArgumentException("Profile cannot be empty");

@@ -42,6 +42,10 @@ class PasswordValidator implements FormFieldValidator {
         }
     }
 
+    public function getFactory (): ValidatorFactory {
+        return $this->factory;
+    }
+
     public function isValid (Form $form, $field) {
         return $this->factory->isValid($form, $field);
     }
