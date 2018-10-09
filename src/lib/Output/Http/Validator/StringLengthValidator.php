@@ -26,5 +26,7 @@ class StringLengthValidator implements FormFieldValidator {
                 $msg
             );
         }
+
+        return TRUE;
     }
 }

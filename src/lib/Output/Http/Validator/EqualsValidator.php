@@ -18,5 +18,6 @@ class EqualsValidator implements FormFieldValidator {
 
     public function isValid (Form $form, $field) {
         if ($form->get($field) != $this->toMatch) throw new ValidationException($this->message);
+        return TRUE;
     }
 }

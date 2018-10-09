@@ -6,6 +6,9 @@ use Globals\Exception\ValidationException;
 use Output\Http\Form;
 use Output\Http\FormFieldValidator;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ChainValidator implements FormFieldValidator {
     /** @var $validators FormFieldValidator[] */
     protected $validators = array();

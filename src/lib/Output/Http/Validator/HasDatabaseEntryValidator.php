@@ -25,5 +25,7 @@ class HasDatabaseEntryValidator implements FormFieldValidator {
             $msg = str_replace(":column:", ucfirst($this->column), $this->error);
             throw new ValidationException($msg);
         }
+
+        return TRUE;
     }
 }
