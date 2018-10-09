@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ConfigureRoleCommand extends Command {
 
     protected function configure () {

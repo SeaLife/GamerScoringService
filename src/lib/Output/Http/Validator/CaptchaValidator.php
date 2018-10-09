@@ -7,6 +7,9 @@ use Output\Http\Form;
 use Output\Http\FormFieldValidator;
 use ReCaptcha\ReCaptcha;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CaptchaValidator implements FormFieldValidator {
 
     /** @var $captcha ReCaptcha */
