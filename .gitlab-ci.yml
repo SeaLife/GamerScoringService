@@ -1,0 +1,17 @@
+stages:
+- test
+
+.run-tests:
+  script: &run-tests
+  - 'bash ci/setup.sh'
+  - 'vendor/bin/phpunit --bootstrap src/bootstrap/bootstrap.php src/lib/Tests/*'
+
+test-php-rc:
+  stage: test
+  image: php:rc
+  script: *run-tests
+
+test-php-latest:
+  stage: test
+  image: php:latest
+  script: *run-tests
