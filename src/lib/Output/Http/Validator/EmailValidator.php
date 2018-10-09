@@ -13,5 +13,7 @@ class EmailValidator implements FormFieldValidator {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException("Does not contain a valid email address");
         }
+
+        return TRUE;
     }
 }

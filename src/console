@@ -2,33 +2,21 @@
 <?php
 /** @noinspection ALL */
 
-use Console\AddRoleCommand;
-use Console\CheckAccess;
-use Console\ConfigureRoleCommand;
-use Console\ServerCommand;
-use Globals\DB;
-use Symfony\Component\Console\Application;
+include_once __DIR__ . '/bootstrap/bootstrap.php';
 
-/** @noinspection PhpIncludeInspection */
-
-include_once __DIR__ . '/bootstrap/globals.php';
-include_once __DIR__ . '/../vendor/autoload.php';
-include_once __DIR__ . "/config.php";
-
-define("__ROOT__", __DIR__);
-
-include_once __DIR__ . '/bootstrap/classloader.php';
-include_once __DIR__ . '/bootstrap/init.php';
 
 Globals\ConfigurationManager::getInstance()->init();
+Globals\DB::getInstance()->load(envvar("PROFILE", "dev"));
 
-DB::getInstance()->load(envvar("PROFILE", "dev"));
+$app = new Symfony\Component\Console\Application();
 
-$app = new Application();
+$app->add(new Console\ServerCommand());
+$app->add(new Console\AddRoleCommand());
+$app->add(new Console\ConfigureRoleCommand());
+$app->add(new Console\CheckAccess());
 
-$app->add(new ServerCommand());
-$app->add(new AddRoleCommand());
-$app->add(new ConfigureRoleCommand());
-$app->add(new CheckAccess());
-
-$app->run();
+try {
+    $app->run();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
