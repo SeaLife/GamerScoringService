@@ -11,3 +11,5 @@ composer.phar
 envvar/
 cache/
 logs/
+
+Dockerfile.build

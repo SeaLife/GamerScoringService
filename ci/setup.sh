@@ -9,6 +9,9 @@ set -xe
 apt-get update -yqq
 apt-get install git curl zip unzip libzip-dev libxml2-dev -yqq
 
+pecl install xdebug
+docker-php-ext-enable xdebug
+
 # Install mysql driver
 # Here you can install any other extension that you need
 docker-php-ext-install pdo_mysql zip xml
@@ -19,6 +22,3 @@ php -r "if (hash_file('SHA384', 'composer-setup.php') === '93b54496392c062774670
 php composer-setup.php --install-dir=/usr/bin --filename=composer
 php -r "unlink('composer-setup.php');"
 chmod +x /usr/bin/composer
-
-composer update
-composer update --dev
